@@ -8,6 +8,18 @@ export class WalletController {
     const result = await walletService.fundWallet(body);
     return result;
   };
+
+  withdrawFromWallet = async (req: IncomingMessage, res: ServerResponse) => {
+    const body = await getRequestBody(req);
+    const result = await walletService.withdrawFromWallet(body);
+    return result;
+  };
+
+  transfer = async (req: IncomingMessage, res: ServerResponse) => {
+    const body = await getRequestBody(req);
+    const result = await walletService.transferFunds(body);
+    return result;
+  };
 }
 
 export const walletController = new WalletController();

@@ -19,10 +19,9 @@ export const routes: Route[] = [
   { path: '/api/user/profile', method: 'GET', handler: userController.getProfile },
 
   // Wallet Routes
-  // { path: '/api/wallet/balance', method: 'GET', handler: walletController.getBalance },
   { path: '/api/wallet/fund', method: 'POST', handler: walletController.fundWallet },
-  // { path: '/api/wallet/transfer', method: 'POST', handler: walletController.transfer },
-  // { path: '/api/wallet/withdraw', method: 'POST', handler: walletController.withdraw },
+  { path: '/api/wallet/withdraw', method: 'POST', handler: walletController.withdrawFromWallet },
+  { path: '/api/wallet/transfer', method: 'POST', handler: walletController.transfer }
 ];
 
 export const routeMap = new Map<string, Route>(
