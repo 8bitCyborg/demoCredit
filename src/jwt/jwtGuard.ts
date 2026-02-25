@@ -23,7 +23,7 @@ export const jwtGuard = async (req: AuthenticatedRequest) => {
   return decoded;
 };
 
-export const getUserIdFromRequest = (req: IncomingMessage): number => {
+export const getUserIdFromRequest = (req: IncomingMessage): number => { // use this to get user id to prevent malicious users from spoofing user ids.
   const user = (req as AuthenticatedRequest).user;
   if (!user || !user.userId) {
     throw { status: 401, message: 'User not authenticated' };
