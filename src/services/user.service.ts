@@ -36,11 +36,12 @@ export class UserService {
     return user;
   };
 
-  async getUserByEmail(email: string) {
+  async getUserByEmail(email: string, withPassword: boolean = false) {
+    const columns = ['id', 'first_name', 'last_name', 'email', 'created_at', ...(withPassword ? ['password'] : [])];
     const user = await db('users')
       .where({ email })
       .whereNull('deleted_at')
-      .select('id', 'first_name', 'last_name', 'email', 'created_at')
+      .select(columns)
       .first();
     return user;
   };

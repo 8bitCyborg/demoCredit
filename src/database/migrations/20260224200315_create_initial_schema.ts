@@ -13,6 +13,7 @@ export async function up(knex: any): Promise<void> {
       table.string("bvn", 11).unique().notNullable();
       table.timestamps(true, true);
       table.timestamp('deleted_at').nullable();
+      table.index(['email', 'deleted_at']);
     })
 
     .createTable("wallets", (table: any) => {
@@ -25,6 +26,7 @@ export async function up(knex: any): Promise<void> {
       table.boolean("is_disabled").defaultTo(false);
       table.timestamps(true, true);
       table.timestamp('deleted_at').nullable();
+      table.index(['user_id']);
     });
 };
 

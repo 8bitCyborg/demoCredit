@@ -8,12 +8,13 @@ export interface Route {
   path: string;
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   handler: (req: IncomingMessage, res: ServerResponse) => Promise<any>;
+  isPublic?: boolean;
 }
 
 export const routes: Route[] = [
   // Auth Routes
-  { path: '/api/auth/signup', method: 'POST', handler: authController.signup },
-  { path: '/api/auth/login', method: 'POST', handler: authController.login },
+  { path: '/api/auth/signup', method: 'POST', handler: authController.signup, isPublic: true },
+  { path: '/api/auth/login', method: 'POST', handler: authController.login, isPublic: true },
 
   // User Routes
   { path: '/api/user/profile', method: 'GET', handler: userController.getProfile },

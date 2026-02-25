@@ -1,5 +1,6 @@
 import * as http from 'http';
 import { routeMap } from './utils/routes.js';
+import { jwtGuard } from './jwt/jwtGuard.js';
 
 const PORT = process.env.PORT || 3000;
 
@@ -8,6 +9,9 @@ const server = http.createServer(async (req: http.IncomingMessage, res: http.Ser
   try {
     const route = routeMap.get(`${method}:${url}`);
     if (route) {
+      if (!route.isPublic) {
+        await jwtGuard(req as any);
+      }
       return await route.handler(req, res);
     }
 
@@ -26,7 +30,6 @@ const server = http.createServer(async (req: http.IncomingMessage, res: http.Ser
     res.end(JSON.stringify({ error: 'Not Found' }));
 
   } catch (error) {
-
     console.error('Request error:', error);
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Internal Server Error' }));

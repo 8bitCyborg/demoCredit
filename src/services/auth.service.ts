@@ -1,5 +1,6 @@
 import { userService } from "./user.service.js";
 import bcrypt from "bcrypt";
+import { generateToken } from "../jwt/jwt.util.js";
 
 export class AuthService {
   async signup(body: any) {
@@ -18,9 +19,10 @@ export class AuthService {
       // };
 
       const user = await userService.create(body);
+      const token = generateToken({ userId: user.id, email: user.email });
       return {
         user,
-        token: 'faux-jwt-token'
+        token
       };
     } catch (error) {
       return {
@@ -31,23 +33,17 @@ export class AuthService {
   };
 
   async login(body: any) {
-    try {
-      const { email, password } = body;
-      const user = await userService.getUserByEmail(email);
-      if (!user) throw new Error('User not found');
+    const { email, password } = body;
+    const user = await userService.getUserByEmail(email, true);
+    if (!user) throw new Error('User not found');
 
-      const isPasswordValid = await bcrypt.compare(password, user?.password);
-      if (!isPasswordValid) throw new Error('Invalid email/password');
+    const isPasswordValid = await bcrypt.compare(password, user?.password);
+    if (!isPasswordValid) throw new Error('Invalid email/password');
 
-      return {
-        user,
-        token: 'faux-jwt-token',
-      };
-    } catch (error) {
-      return {
-        message: "Unable to complete login. Please try again later",
-        error,
-      };
+    const token = generateToken({ userId: user.id, email: user.email });
+    return {
+      user,
+      token,
     };
   };
 

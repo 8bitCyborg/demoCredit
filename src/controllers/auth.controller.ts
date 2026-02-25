@@ -15,6 +15,6 @@ export class AuthController {
     const response = await authService.login(body);
     return { response };
   };
-}
+};
 
 export const authController = new AuthController();

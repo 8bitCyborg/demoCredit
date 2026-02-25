@@ -17,9 +17,11 @@
   "description": "",
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/knex": "^0.15.2",
     "@types/node": "^25.3.0",
     "bcrypt": "^6.0.0",
+    "jsonwebtoken": "^9.0.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
