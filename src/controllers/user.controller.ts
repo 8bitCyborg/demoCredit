@@ -2,9 +2,10 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { userService } from '../services/user.service.js';
 
 export class UserController {
-  async getProfile(req: IncomingMessage, res: ServerResponse) {
-
-  }
+  getProfile = async (req: IncomingMessage, res: ServerResponse) => {
+    // Implementation will go here
+    return { message: 'Profile implementation pending' };
+  };
 }
 
 export const userController = new UserController();
