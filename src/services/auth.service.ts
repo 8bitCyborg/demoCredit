@@ -1,24 +1,31 @@
+import { create } from "node:domain";
+import { userService } from "./user.service.js";
 export class AuthService {
   async signup(body: any) {
     try {
-      const response = await fetch(`https://adjutor.lendsqr.com/v2/verification/karma/${body.bvn}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${process.env.APP_SECRET}`
-        }
-      });
-      const data = await response.json();
-      console.log('Karma Verification Response:', data);
-    } catch (error) {
-      console.error('Karma Verification Error:', error);
-    }
+      // first check if user is blacklisted on lendsqr karma. Do not complete signup if they are.
+      // const karma_response = await fetch(`https://adjutor.lendsqr.com/v2/verification/karma/${body.bvn}`, {
+      //   method: 'GET',
+      //   headers: { 'Authorization': `Bearer ${process.env.APP_SECRET}` }
+      // });
 
-    return {
-      id: body.id,
-      name: `${body.first_name} ${body.last_name}`,
-      email: body.email,
-      createdAt: new Date().toISOString(),
-      bvn: body.bvn,
+      // if (karma_response.ok) {
+      //   const data = await karma_response.json();
+      //   if (data?.data?.karma_identity) {
+      //     throw new Error('Blacklisted');
+      //   };
+      // };
+
+      const createUser = await userService.create(body);
+      return {
+        createUser,
+        token: 'faux-jwt-token'
+      };
+    } catch (error) {
+      return {
+        message: 'Unable to complete signup. Please try again later',
+        error
+      };
     };
   };
 

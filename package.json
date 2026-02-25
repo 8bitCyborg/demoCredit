@@ -6,15 +6,23 @@
   "scripts": {
     "start": "node --env-file=.env --loader ts-node/esm src/index.ts",
     "dev": "node --env-file=.env --loader ts-node/esm src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate:make": "NODE_OPTIONS='--loader ts-node/esm' npx knex migrate:make --knexfile knexfile.ts",
+    "migrate:latest": "NODE_OPTIONS='--loader ts-node/esm --no-warnings' knex migrate:latest",
+    "migrate:rollback": "NODE_OPTIONS='--loader ts-node/esm --no-warnings' knex migrate:rollback"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/knex": "^0.15.2",
     "@types/node": "^25.3.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "knex": "^3.1.0",
+    "mysql2": "^3.18.0"
   }
 }

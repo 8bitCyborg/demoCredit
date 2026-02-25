@@ -5,13 +5,9 @@ import { getRequestBody } from '../utils/body-parser.js';
 export class AuthController {
   async signup(req: IncomingMessage, res: ServerResponse) {
     const body = await getRequestBody(req);
-    const user = await authService.signup(body);
+    const response = await authService.signup(body);
     res.writeHead(201, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({
-      message: 'User signed up successfully',
-      token: 'faux-jwt-token',
-      user,
-    }));
+    res.end(JSON.stringify({ response }));
   };
 
   async login(req: IncomingMessage, res: ServerResponse) {
