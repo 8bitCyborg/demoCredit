@@ -13,7 +13,7 @@ export class AuthController {
         message: 'Validation failed',
         errors: validation.error.format()
       };
-    }
+    };
 
     const response = await authService.signup(validation.data);
     res.setHeader('Content-Type', 'application/json');

@@ -6,6 +6,19 @@ const PORT = process.env.PORT || 3000;
 
 const server = http.createServer(async (req: http.IncomingMessage, res: http.ServerResponse) => {
   const { url, method } = req;
+  const allowedOrigin = 'http://localhost:5173';
+
+  res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Client-Type');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  if (method === 'OPTIONS') {
+    res.writeHead(204);
+    res.end();
+    return;
+  };
+
   try {
     const route = routeMap.get(`${method}:${url}`);
     if (route) {

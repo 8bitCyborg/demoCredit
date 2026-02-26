@@ -37,7 +37,7 @@ export class UserService {
   };
 
   async getUserByEmail(email: string, withPassword: boolean = false) {
-    const columns = ['id', 'first_name', 'last_name', 'email', 'created_at', ...(withPassword ? ['password'] : [])];
+    const columns = ['id', 'first_name', 'last_name', 'email', 'created_at', 'bvn', 'phone', ...(withPassword ? ['password'] : [])];
     const user = await db('users')
       .where({ email })
       .whereNull('deleted_at')

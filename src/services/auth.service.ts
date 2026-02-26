@@ -29,16 +29,16 @@ export class AuthService {
   };
 
   async login(body: any) {
-    const { email, password } = body;
-    const user = await userService.getUserByEmail(email, true);
+    const user = await userService.getUserByEmail(body.email, true);
     if (!user) throw new Error('User not found');
 
-    const isPasswordValid = await bcrypt.compare(password, user?.password);
+    const isPasswordValid = await bcrypt.compare(body.password, user?.password);
     if (!isPasswordValid) throw new Error('Invalid email/password');
 
     const token = generateToken({ userId: user.id, email: user.email });
+    const { password, ...userData } = user;
     return {
-      user,
+      user: userData,
       token,
       status: 200,
     };
