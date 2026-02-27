@@ -48,6 +48,7 @@ export class WalletService {
     // if successful, we extract the user's id or email from the validation data if we need to.
     // for the purposes of this demo, we will just return true and pretend we already have the user's email from the funding validation response.
     return {
+      ref,
       isValid: true,
       email
     };

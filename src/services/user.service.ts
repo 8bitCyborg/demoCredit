@@ -31,7 +31,17 @@ export class UserService {
     const user = await query('users')
       .where({ id })
       .whereNull('deleted_at')
-      .select('id', 'first_name', 'last_name', 'email', 'created_at')
+      .select('id', 'first_name', 'last_name', 'email', 'created_at', 'bvn', 'phone')
+      .first();
+    return user;
+  };
+
+  async getUserByPhone(phone: string, withPassword: boolean = false) {
+    const columns = ['id', 'first_name', 'last_name', 'email', 'created_at', 'bvn', 'phone', ...(withPassword ? ['password'] : [])];
+    const user = await db('users')
+      .where({ phone })
+      .whereNull('deleted_at')
+      .select(columns)
       .first();
     return user;
   };
@@ -45,7 +55,6 @@ export class UserService {
       .first();
     return user;
   };
-
 
 };
 

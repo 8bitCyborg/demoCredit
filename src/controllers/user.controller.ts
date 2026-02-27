@@ -11,7 +11,7 @@ export class UserController {
       throw { status: 400, message: 'Validation failed', errors: validation.error.format() };
     };
 
-    const result = await userService.getUserByEmail(body.email, false);
+    const result = await userService.getUserByPhone(body.phone, false);
     return result;
   };
 };

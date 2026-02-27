@@ -19,7 +19,10 @@ export const loginSchema = z.object({
 export type LoginInput = z.infer<typeof loginSchema>;
 
 export const validateReceiverSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  phone: z
+    .string()
+    .min(1, 'Phone number is required')
+    .regex(/^\d{11}$/, 'Phone number must be exactly 11 digits'),
 });
 
 export type ValidateReceiverInput = z.infer<typeof validateReceiverSchema>;
