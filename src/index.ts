@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000;
 
 const server = http.createServer(async (req: http.IncomingMessage, res: http.ServerResponse) => {
   const { url, method } = req;
-  const allowedOrigin = 'http://localhost:5173';
+  const allowedOrigin = ['http://localhost:5173', 'https://democredit.netlify.app'];
 
   res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');

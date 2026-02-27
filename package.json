@@ -25,6 +25,7 @@
     "bcrypt": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
