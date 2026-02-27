@@ -10,7 +10,8 @@
     "target": "esnext",
     "esModuleInterop": true,
     "types": [
-      "node"
+      "node",
+      "vitest/globals"
     ],
     // For nodejs:
     // "lib": ["esnext"],

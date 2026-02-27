@@ -35,7 +35,7 @@ export class WalletHelperService {
     };
   };
 
-  // use this to find a user's id from as funding info from the partner doesn't "usually" carry the user's id.
+  // use this to find a user's id as funding info from the partner doesn't "usually" carry the user's id from our side.
   // emails are usually consistent though.
   async getWalletByEmail(email: string) {
     const wallet = await db('wallets')
