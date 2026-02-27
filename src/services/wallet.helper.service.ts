@@ -6,9 +6,12 @@ export class WalletHelperService {
     // we generate a key from the transaction by hashing specific data that will be constant and unique to the transaction.
     // we then check if the key already exists in redis.
     // if it does, we throw an error.
-    // if it doesn't, we insert the key with a ttl of 30s.
+    // if it doesn't, we insert the key with a ttl of 30s if the transaction is successful.
     // for the sake of this demo, we will just rely on the unique reference constraint on transactions to prevent duplicates.
     // this would be certainly be required in an actual, production app.
+    if (!data.reference) {
+      throw new Error("Transaction reference is required");
+    };
     return true;
   };
 

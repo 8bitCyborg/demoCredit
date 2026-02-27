@@ -87,6 +87,9 @@ export class WalletService {
   async withdrawFromWallet(body: any) {
     await whs.idempotency(body);
 
+    // before getting here, the bank being withdrawn to would have first been verified.
+    // the user will also be ideally required to set up a withdrawal pin that will be verified first before getting here as well.
+
     return await db.transaction(async (trx: any) => {
       const userWallet = await this.getWalletById(body.user_id, trx);
       await whs.validateWallet(userWallet, body.amount);
@@ -99,6 +102,8 @@ export class WalletService {
 
   async transferFunds(body: any) {
     await whs.idempotency(body);
+    // the user will also be ideally required to set up a withdrawal pin that will be verified first before getting here.
+
 
     return await db.transaction(async (trx) => {
       const senderWallet = await this.getWalletById(body.sender_user_id, trx);
