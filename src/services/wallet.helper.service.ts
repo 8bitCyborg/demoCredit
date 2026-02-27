@@ -15,14 +15,23 @@ export class WalletHelperService {
     return true;
   };
 
-  async validateTransaction(ref: string, email: string) {
+  async validateTransaction(ref: string) {
     // here we validate with a partner (eg: paystack) that the funding info is actually legit.
-    // if successful, we extract the user's id or email from the validation data if we need to.
+    // we pass the reference from the payment webhook or from the client to the partner.
+    // if verificaion is successful, we extract the user's phone or email or some other way of ID-ing them on our side from the validation data if we need to.
     // for the purposes of this demo, we will just return true and pretend we already have the user's email from the funding validation response.
     return {
-      ref,
       isValid: true,
-      email
+      validationData: {
+        ref: 'reference from validation.',
+        amount: 'amount from validation',
+        customer: {
+          email: 'email from validation',
+          id: 'id from validation',
+          phone: 'phone from validation',
+        }
+      },
+      ref,
     };
   };
 

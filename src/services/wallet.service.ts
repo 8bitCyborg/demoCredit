@@ -68,7 +68,7 @@ export class WalletService {
     await whs.idempotency(body);
 
     return await db.transaction(async (trx: any) => {
-      const validateTransaction = await whs.validateTransaction(body.reference, body.email);
+      const validateTransaction = await whs.validateTransaction(body.reference);
       if (!validateTransaction) throw new Error("Transaction validation failed");
 
       const userWallet = await whs.getWalletByEmail(body.email);
@@ -95,7 +95,7 @@ export class WalletService {
       await whs.validateWallet(userWallet, body.amount);
       await this._debit(body, userWallet.id, trx);
 
-      // pass an email off to the queue here to notify the user of the withdrawal.
+      // pass an email/notification off to the queue here to notify the user of the withdrawal.
       return { message: "Wallet withdrawn successfully", status: 200 };
     });
   };
@@ -103,7 +103,6 @@ export class WalletService {
   async transferFunds(body: any) {
     await whs.idempotency(body);
     // the user will also be ideally required to set up a withdrawal pin that will be verified first before getting here.
-
 
     return await db.transaction(async (trx) => {
       const senderWallet = await this.getWalletById(body.sender_user_id, trx);
@@ -123,7 +122,7 @@ export class WalletService {
         reference: body.reference + "-CR",
       }, receiverWallet.id, trx);
 
-      // send an email here to the sender and receiver via a queue to notify them of the transaction.
+      // send an email/notification here to the sender and receiver via a queue to notify them of the transaction.
       return { message: "Funds transferred successfully", status: 200 };
     });
   };

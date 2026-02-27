@@ -5,7 +5,7 @@ import { generateToken } from "../jwt/jwt.util.js";
 export class AuthService {
   async signup(body: any) {
     // first check if user is blacklisted on lendsqr karma. Do not complete signup if they are.
-    if (body.bvn === '22222222222') {
+    if (body.bvn === '22222222222') { //this is hardcoded here because in test mode, the karma api seems to always return the same response.
       const karma_response = await fetch(`https://adjutor.lendsqr.com/v2/verification/karma/${body.bvn}`, {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${process.env.APP_SECRET}` }
@@ -22,7 +22,7 @@ export class AuthService {
     const user = await userService.create(body);
     const token = generateToken({ userId: user.id, email: user.email });
 
-    // pass off welcome email to queue here.
+    // pass off welcome email/notification to queue here.
     return {
       user,
       token,
