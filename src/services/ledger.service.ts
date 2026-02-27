@@ -1,3 +1,5 @@
+import db from "../database/db.js";
+
 export class LedgerService {
 
   async createLedgerEntry(body: any, trx?: any) {
@@ -10,6 +12,12 @@ export class LedgerService {
       reference: body.reference,
       description: body.description
     });
+  };
+
+  async getUserLedger(userId: number) {
+    const wallet = await db('wallets').where({ user_id: userId }).first();
+    if (!wallet) throw new Error("No wallet found for this user");
+    return await db('transactions').where({ wallet_id: wallet.id });
   };
 
 };

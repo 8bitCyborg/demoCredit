@@ -42,6 +42,12 @@ export class AuthController {
     );
     return { response };
   };
+
+  logout = async (req: IncomingMessage, res: ServerResponse) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Set-Cookie', 'token=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict');
+    return { message: 'Logged out successfully' };
+  };
 };
 
 export const authController = new AuthController();
