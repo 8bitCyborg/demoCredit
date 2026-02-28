@@ -1,6 +1,19 @@
 import db from "../database/db.js";
 
 export class WalletHelperService {
+  async getBankList() {
+    // this would call an api to get a list of banks and their bankcodes for withdrawal.
+    // this is better than hardcoding on the frontend or storing in the db because the list would always be up-to date.
+    // redundant if we're maintaining the list ourselves though.
+  };
+
+  async verifyBankAccount() {
+    // before completing a transfer, we would need to verify that the bank account is valid to avoid issues with incorrect transfers.
+    // this would involve calling an api to verify the bank account and then show the response to the user on the client-side to confirm before proceeding with the transfer.
+    // for the purposes of this demo, we will just return true and pretend we already have the user's email from the funding validation response.
+    return true;
+  };
+
   async idempotency(data: any) {
     // in an actual prod app, the purpose of this is to prevent duplicate transactions, particularly from replay attacks.
     // we generate a key from the transaction by hashing specific data that will be constant and unique to the transaction.

@@ -17,6 +17,7 @@ export class LedgerService {
   async getUserLedger(userId: number) {
     const wallet = await db('wallets').where({ user_id: userId }).first();
     if (!wallet) throw new Error("No wallet found for this user");
+    // in a real application, this would be paginated so the frontend is not overloaded and start to hang/crash.
     return await db('transactions').where({ wallet_id: wallet.id });
   };
 
