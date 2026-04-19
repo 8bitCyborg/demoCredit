@@ -5,6 +5,7 @@ export async function getRequestBody(req: IncomingMessage): Promise<any> {
   let currentSize = 0;
 
   return new Promise((resolve, reject) => {
+    console.log(`Starting to read body for ${req.method} ${req.url}`);
     let body = '';
     req.on('data', (chunk) => {
       currentSize += chunk.length;

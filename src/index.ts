@@ -21,11 +21,11 @@ app.use(cors({
   origin: ['http://localhost:5173', 'https://democredit.netlify.app'],
   credentials: true
 }));
-app.use(express.json());
 app.use(cookieParser());
 
 // Rate Limiter Middleware
 app.use(async (req: any, res: any, next: any) => {
+  console.log(`Incoming request: ${req.method} ${req.url}`);
   const ip = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || 'global';
   try {
     await limiter.consume(ip);
