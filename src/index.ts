@@ -1,77 +1,104 @@
-import * as http from 'http';
-import { routeMap } from './utils/routes.js';
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import multer from 'multer';
+import { routes } from './utils/routes.js';
 import { jwtGuard } from './jwt/jwtGuard.js';
 import { limiter } from './utils/rate-limiter.js';
 
+const app = express();
 const PORT = process.env.PORT || 3000;
 
-const server = http.createServer(async (req: http.IncomingMessage, res: http.ServerResponse) => {
-  const { url, method } = req;
+// Multer Configuration: Memory storage as requested
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
 
+// Middleware
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://democredit.netlify.app'],
+  credentials: true
+}));
+app.use(express.json());
+app.use(cookieParser());
+
+// Rate Limiter Middleware
+app.use(async (req: any, res: any, next: any) => {
   const ip = (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress || 'global';
   try {
     await limiter.consume(ip);
+    next();
   } catch (rejRes) {
-    res.writeHead(429, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({
+    res.status(429).json({
       error: 'Too Many Requests',
       message: 'Too many requests'
-    }));
-    return;
-  };
-
-  const allowedOrigins = ['http://localhost:5173', 'https://democredit.netlify.app'];
-  const origin: any = req.headers.origin;
-
-  if (allowedOrigins.includes(origin)) res.setHeader('Access-Control-Allow-Origin', origin);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Client-Type');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-
-  if (method === 'OPTIONS') {
-    res.writeHead(204);
-    res.end();
-    return;
-  };
-
-  try {
-    const route = routeMap.get(`${method}:${url}`);
-    if (route) {
-      if (!route.isPublic) {
-        await jwtGuard(req as any);
-      }
-      const result = await route.handler(req, res);
-      if (!res.writableEnded) { //incase the write stream is not ended.
-        res.end(result ? JSON.stringify(result) : undefined);
-      }
-      return;
-    }
-
-    // Default /api route (health check) or root
-    if ((url === '/api') && method === 'GET') {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({
-        message: 'Wallet Service MVP is running',
-        version: '1.0.0'
-      }));
-      return;
-    }
-
-    // 404 handler
-    res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Not Found' }));
-
-  } catch (error) {
-    console.error('Request error:', error);
-    if (!res.headersSent) {
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Internal Server Error' }));
-    } else if (!res.writableEnded) {
-      res.end();
-    }
+    });
   }
 });
 
-server.listen(PORT, () => {
+// Health check
+app.get('/api', (req: any, res: any) => {
+  res.json({
+    message: 'Wallet Service MVP is running',
+    version: '1.0.0'
+  });
+});
+
+// Register Application Routes
+routes.forEach(route => {
+  const middlewares: any[] = [];
+
+  // Authentication Guard
+  if (!route.isPublic) {
+    middlewares.push(async (req: any, res: any, next: any) => {
+      try {
+        await jwtGuard(req);
+        next();
+      } catch (e: any) {
+        res.status(e.status || 401).json({
+          error: e.message || 'Unauthorized'
+        });
+      }
+    });
+  }
+
+  // Multer File Handling for Loans Application
+  if (route.path === '/api/loans/apply') {
+    middlewares.push(upload.single('bankStatement'));
+  }
+
+  const method = route.method.toLowerCase() as 'get' | 'post' | 'put' | 'delete' | 'patch';
+
+  (app as any)[method](route.path, ...middlewares, async (req: express.Request, res: express.Response) => {
+    try {
+      const result = await route.handler(req as any, res as any);
+      if (!res.writableEnded) {
+        res.json(result);
+      }
+    } catch (error: any) {
+      console.error(`Route error [${route.method} ${route.path}]:`, error);
+      if (!res.headersSent) {
+        res.status(error.status || 500).json({
+          error: error.message || 'Internal Server Error'
+        });
+      }
+    }
+  });
+});
+
+// 404 handler
+app.use((req: any, res: any) => {
+  res.status(404).json({ error: 'Not Found' });
+});
+
+// Error handler
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ error: 'Internal Server Error' });
+});
+
+app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

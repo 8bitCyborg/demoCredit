@@ -3,6 +3,7 @@ import { authController } from '../controllers/auth.controller.js';
 import { userController } from '../controllers/user.controller.js';
 import { walletController } from '../controllers/wallet.controller.js';
 import { ledgerController } from '../controllers/ledger.controller.js';
+import { loanController } from '../controllers/loans.controller.js';
 import { asyncHandler } from './async-handler.js';
 
 export interface Route {
@@ -26,7 +27,10 @@ export const routes: Route[] = [
   { path: '/api/wallet', method: 'GET', handler: walletController.getWallet },
   { path: '/api/wallet/fund', method: 'POST', handler: walletController.fundWallet },
   { path: '/api/wallet/withdraw', method: 'POST', handler: walletController.withdrawFromWallet },
-  { path: '/api/wallet/transfer', method: 'POST', handler: walletController.transfer }
+  { path: '/api/wallet/transfer', method: 'POST', handler: walletController.transfer },
+
+  // Loan Routes
+  { path: '/api/loans/apply', method: 'POST', handler: loanController.applyForLoan }
 ];
 
 export const routeMap = new Map<string, Route>(
